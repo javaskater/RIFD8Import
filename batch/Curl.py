@@ -1,18 +1,28 @@
 # -*- coding: utf8 -*-
 '''
-Created on 28 avr. 2012
+Created on 22 marx 2016
 
 @author: jpmena
+
+https://docs.python.org/3.1/howto/urllib2.html 
+for a thorough documentation about handling HTTP requests !!!
 '''
-from urllib import request, parse, error
-from _datetime.datetime import time
+
+
+from urllib import request, parse, error 
+from datetime import time
 
 class Curl(object):
-    def __init__(self,f_log=None,proxy_info=None):
+    def __init__(self,f_log=None,proxy_info=None, ):
         self.proxy_support=None
+        self.proxy_opener=None
         self.f_log=f_log
-        #if(proxy_info is not None):
-        #    self.proxy_support = urllib.ProxyHandler({"http":"http://%(host)s:%(port)d" % proxy_info})
+        if proxy_info is not None: #see http://stackoverflow.com/questions/22967084/urllib-request-urlretrieve-with-proxy
+            self.proxy_support = request.ProxyHandler({"http":"http://%(host)s:%(port)d" % proxy_info})
+        else: #http://www.decalage.info/fr/node/17 force it not to use a proxy
+            self.proxy_support = request.ProxyHandler({})
+        self.proxy_opener = request.build_opener(self.proxy_support)
+        request.install_opener(self.proxy_opener)
     
     def trace(self,msg):
         if self.f_log is not None:
@@ -21,24 +31,36 @@ class Curl(object):
             print(msg)
     
     #TODO ajouter l'authentification basique !!!
-    def getUrlResponseData(self, url, method='GET', requestparams=None):
+    def getUrlResponseData(self, url, method='GET', requestparams=None, basicAuth=None):
         resp=None
         try:
             #problème récupérer les données en utf-8
             #http://stackoverflow.com/questions/1020892/urllib2-read-to-unicode
-            self.trace('Curl: requete de type {0}, pour l\'URL: {2}'.format(method,url))
+            self.trace('Curl: requete de type {0}, pour l\'URL: {1}'.format(method,url))
             querystring=None
+            if basicAuth is not None: #see https://docs.python.org/3.1/howto/urllib2.html
+                # create a password manager
+                password_mgr = request.HTTPPasswordMgrWithDefaultRealm()
+                # Add the username and password.
+                # If we knew the realm, we could use it instead of None.
+                password_mgr.add_password(None, url, basicAuth['username'], basicAuth['password'])
+                handler = request.HTTPBasicAuthHandler(password_mgr)
+                auth_opener = request.build_opener(handler)
+                request.install_opener(auth_opener)
+
             if requestparams is not None:
                 querystring = parse.urlencode(requestparams)
                 for cle,valeur in requestparams :
                     self.trace('avec comme argument : {0} => {1}'.format(cle,valeur))
                     
             
-            connection = {
+            if querystring is not None:
+                connection = {
                       'GET': lambda url: request.urlopen(url+'?' + querystring),
                       'POST': lambda url: request.urlopen(url, querystring.encode('ascii')),
                       }[method](url)
-            
+            else:
+                connection=request.urlopen(url)
             resp = connection.read()    
 
             self.trace('Curl: les données {0} de {1} ont été correctement récupérées'.format(repr(resp), url))
@@ -53,7 +75,7 @@ class Curl(object):
             raise exu
         return resp
     
-    def secureRequest(self, url, method, reqparams, paramsRetry=None):
+    def secureRequest(self, url, reqparams, method='GET', paramsRetry=None):
         if paramsRetry is not None:
             timeout=int(paramsRetry['timeout'])
             nbRetries=int(paramsRetry['nbRetries'])
@@ -84,10 +106,6 @@ class Curl(object):
             return self.getUrlResponseData(url, method, reqparams)
 
 if __name__ == '__main__':
-    c=Curl(proxy_info={'host':'dgproxy.appli.dgi','port':8080})
-    c.connect({'urlLogin':u'http://testadh.rifrando.asso.fr/users/login/', 
-                                         'user':[u'data[User][username]',u'196793'],
-                                         'password':[u'data[User][password]',u'yvonne'],
-                                         'nomCookie':u'CAKEPHP'})
-    xml=c.getUrlResponseData(u'http://testadh.rifrando.asso.fr/randonnees/extractionstatistique54s5g7vd5d4f849ao5f4wsh')
-    print xml
+    c=Curl()
+    resp=c.getUrlResponseData('http://dru8rif.ovh/rest/session/token')
+    print(resp)
