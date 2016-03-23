@@ -16,7 +16,7 @@ class Authentication(object):
     def createBasicAuthorizationHeader(self):
         stringToEncode = '{0}:{1}'.format(self.identifiant, self.mot_de_passe)
         base64Encoded= base64.b64encode(str.encode(stringToEncode))
-        return 'Basic {0}'.format(base64Encoded)
+        return 'Basic {0}'.format(base64Encoded.decode('ascii'))
 
 
 if __name__ == '__main__':

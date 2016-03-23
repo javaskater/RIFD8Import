@@ -116,7 +116,7 @@ if __name__ == '__main__':
                        "field_heure_depar":[{"value":"2016-03-31T08:19:00"}]}
     d8_post_headers={'Accept':'application/hal+json',
                      'Content-Type':'application/hal+json',
-                     'X-CSRF-Token':token,
+                     'X-CSRF-Token':token.decode('ascii'),
                      'Authorization':a.createBasicAuthorizationHeader()}
     d8_insertion=c.secureRequest('http://dru8rif.ovh/entity/node?_format=hal_json', method='POST',
                                  reqparams=hal_json_d8_postdata,headers=d8_post_headers,
