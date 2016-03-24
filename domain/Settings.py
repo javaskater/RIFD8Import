@@ -25,7 +25,7 @@ class Settings(object):
 class SettingsD8Import(Settings):
     def __init__(self, *args, **kwargs):
         Settings.__init__(self,*args, **kwargs)
-        self.parametres_prod={'pathCsvs':u'/home/jpmena/RIF/transfert_rifrandoextra_03-07-2016/importations',
+        self.parametres_gen_prod={'pathCsvs':u'/home/jpmena/RIF/transfert_rifrandoextra_03-07-2016/importations',
                          'paramsProxy':None,
                           #'paramsProxy':{'host':'dgproxy.appli.dgi','port':8080},#pour le bureau où l'on est derrière un proxy
                          'paramsRetry':{'timeout':60,'nbRetries':5},
@@ -34,7 +34,7 @@ class SettingsD8Import(Settings):
                          'outputDir':u'D:/Applis/batchAnimateurs/out',
                          'mail':{'email':u'adminadh@rifrando.fr','serveurSMTP':u'smtp.numericable.fr'}
                          }
-        self.parametres_dev={'pathCsvs':u'/home/jpmena/RIF/transfert_rifrandoextra_03-07-2016/importations',
+        self.parametres_gen_dev={'pathCsvs':u'/home/jpmena/RIF/transfert_rifrandoextra_03-07-2016/importations',
                          'paramsProxy':None,
                           #'paramsProxy':{'host':'dgproxy.appli.dgi','port':8080},#pour le bureau où l'on est derrière un proxy
                          'paramsRetry':{'timeout':60,'nbRetries':5},
@@ -48,18 +48,16 @@ class SettingsD8Import(Settings):
 class SettingsD8ImportRandosJour(SettingsD8Import):
     def __init__(self, *args, **kwargs):
         SettingsD8Import.__init__(self,*args, **kwargs)
-        self.parametres_prod.update({ # D8 field versus Python field in the csv file  (0 starting rang)...
-                         'ficCsvRandosCreer':{'file' : 'randonnees.csv', 'mapping':[{'body':{23:'string'}},{'title':{4:'string'}},{'field_date':{1:['rifdate','{0:%Y-%m-%d}']}},
-                                                                                    {'field_gare_depart':{23:'string'}},{'field_heure_depar':{11:['riftime','{0:%Y-%m-%dT%H:%M:%S}']}},
-                                                                                    {'field_gare_depart_retour':{23:'string'}},{'field_heure_arrivee_aller':{15:['riftime','{0:%Y-%m-%dT%H:%M:%S}']}}]},
-                         'creerRandoRestAction':{'url':'http://dru8rif.ovh/rest/type/node','method':'POST','node':'randonnee_de_journee'},
-                         })
-        self.parametres_prod.update({ # D8 field versus Python field in the csv file  (0 starting rang)...
-                         'ficCsvRandosCreer':{'file' : 'randonnees.csv', 'mapping':[{'body':{23:'string'}},{'title':{4:'string'}},{'field_date':{1:['rifdate','{0:%Y-%m-%d}']}},
-                                                                                    {'field_gare_depart':{23:'string'}},{'field_heure_depar':{11:['riftime','{0:%Y-%m-%dT%H:%M:%S}']}},
-                                                                                    {'field_gare_depart_retour':{23:'string'}},{'field_heure_arrivee_aller':{15:['riftime','{0:%Y-%m-%dT%H:%M:%S}']}}]},
-                         'creerRandoRestAction':{'url':'http://dru8rif.ovh/rest/type/node','method':'POST','node':'randonnee_de_journee'},
-                         })
+        self.rjsettings = { # D8 field versus Python field in the csv file  (0 starting rang)...
+            'ficCsvRandosCreer':{'file' : 'randonnees.csv', 'date_rando':1 ,'mapping':[['body',22,'string'],['title',4,'string'],['field_date',1,'rifdate'],
+                                                                       ['field_gare_depart',19,'string'],['field_heure_depar',11,'riftime'],
+                                                                        ['field_gare_depart_retour',23,'string'],['field_heure_arrivee_aller',15,'riftime']],
+            'creerRandoRestAction':{'url':'http://pub.rifrando.asso.fr/rest/type/node','method':'POST','node':'randonnee_de_journee'},
+        }}
+        self.parametres_prod = self.parametres_gen_prod.copy()
+        self.parametres_prod.update(self.rjsettings)
+        self.parametres_dev = self.parametres_gen_dev.copy() 
+        self.parametres_dev.update(self.rjsettings)
 
 if __name__ == '__main__':
     pass
