@@ -7,14 +7,15 @@ Created on 22 marx 2016
 https://docs.python.org/3.1/howto/urllib2.html 
 for a thorough documentation about handling HTTP requests !!!
 '''
+import json
+from time import sleep
+from urllib import request, parse, error 
+
 from utils.authentication import Authentication
 
-from urllib import request, parse, error 
-from time import sleep
-import json
 
 class Curl(object):
-    def __init__(self,f_log=None,proxy_info=None, ):
+    def __init__(self, f_log=None,proxy_info=None, ):
         self.proxy_support=None
         self.proxy_opener=None
         self.f_log=f_log
@@ -24,12 +25,7 @@ class Curl(object):
             self.proxy_support = request.ProxyHandler({})
         self.proxy_opener = request.build_opener(self.proxy_support)
         request.install_opener(self.proxy_opener)
-    
-    def trace(self,msg):
-        if self.f_log is not None:
-             self.f_log.p(msg)
-        else:
-            print(msg)
+
     
     #TODO ajouter l'authentification basique !!!
     def getUrlResponseData(self, url, method='GET', requestparams=None, headers={}):
@@ -37,8 +33,7 @@ class Curl(object):
         try:
             #problème récupérer les données en utf-8
             #http://stackoverflow.com/questions/1020892/urllib2-read-to-unicode
-            self.trace('Curl: requete de type {0}, pour l\'URL: {1}'.format(method,url))
-            querystring=None
+            self.f_log.p('Curl: requete de type {0}, pour l\'URL: {1}'.format(method,url))
 
             get_post_data = requestparams
             if requestparams is not None and method == 'GET':
@@ -56,12 +51,12 @@ class Curl(object):
             connection=request.urlopen(httprequest)
             resp = connection.read()    
 
-            self.trace('Curl: les données {0} de {1} ont été correctement récupérées'.format(repr(resp), url))
+            self.f_log.p('Curl: les données {0} de {1} ont été correctement récupérées'.format(repr(resp), url))
         except error.HTTPError as exh:
             if exh.code == 404:
-                self.trace('Curl: code 404: Page {0} non trouvée !'.format(url))
+                self.f_log.p('Curl: code 404: Page {0} non trouvée !'.format(url))
             else:           
-                self.trace('Curl: La requête HTTP vers {0} a échoué avec le code {1} ({2})'.format(url,exh.code, exh.msg))
+                self.f_log.p('Curl: La requête HTTP vers {0} a échoué avec le code {1} ({2})'.format(url,exh.code, exh.msg))
             raise exh
         except error.URLError as exu:
             self.trace('Curl: Echec d\'accès à %s Cause: %r'.format(url,exu.reason))
@@ -78,9 +73,9 @@ class Curl(object):
             exceptionFinale=None
             while not arret:
                 try: 
-                    self.trace('Curl: lancement de la tentative: {0}/{1}'.format(essaiNo,nbRetries))
+                    self.f_log.p('Curl: lancement de la tentative: {0}/{1}'.format(essaiNo,nbRetries))
                     restResponse=self.getUrlResponseData(url, method, reqparams, headers)
-                    self.trace('Curl: La tentative: {0}/{1} d\'est déroulée avec succès'.format(essaiNo,nbRetries))
+                    self.f_log.p('Curl: La tentative: {0}/{1} d\'est déroulée avec succès'.format(essaiNo,nbRetries))
                     arret=True
                 except (error.URLError, error.HTTPError) as e:
                     self.trace('exception levee, on relance la requete')
@@ -89,7 +84,7 @@ class Curl(object):
                     if arret:
                         exceptionFinale=e
                     else:
-                        self.trace('Curl: On attend {0} secondes avant la prochaine tentative no {1}/{2}'.format(timeout,essaiNo,nbRetries))
+                        self.f_log.p('Curl: On attend {0} secondes avant la prochaine tentative no {1}/{2}'.format(timeout,essaiNo,nbRetries))
                         sleep(timeout) #on suspend l'exécution un ceraint nombre de secondes avant de réessayrr
             if exceptionFinale is not None:
                 raise exceptionFinale

@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
 
 #!/usr/bin/env python
+import codecs
+from email import Encoders
 import os
-
-# Import smtplib for the actual sending function
 import smtplib
 
-# Import the email modules we'll need
-from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
+from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 from email.Utils import COMMASPACE, formatdate
-from email import Encoders
-import codecs
 
 
+# Import smtplib for the actual sending function
+# Import the email modules we'll need
 class RIFMail:
     def __init__(self,smtpServer):
         self.s=smtplib.SMTP(smtpServer)

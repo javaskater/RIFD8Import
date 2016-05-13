@@ -5,24 +5,23 @@ Created on 27 déc. 2010
 
 @author: jpmena
 '''
-from datetime import datetime
 import codecs
-import os,sys
+from datetime import datetime
+import os, sys
+
 
 class Log(object):
     log=None
-    def __init__(self,log_path):
-        self.log_path=log_path
-        if(os.path.exists(self.log_path)):
-            os.remove(self.log_path)
-        #self.log=open(self.log_path,'a')
-        self.log=codecs.open(self.log_path, "a", 'utf-8')
+    def __init__(self,log_path=None):
+        self.log=None
+        if log_path is not None:
+            self.log_path=log_path
+            if(os.path.exists(self.log_path)):
+                os.remove(self.log_path)
+                #self.log=open(self.log_path,'a')
+                self.log=codecs.open(self.log_path, "a", 'utf-8')
     
     def getInstance(log_path=None):
-        if Log.log is None:
-            if log_path is None:
-                log_path=os.path.join(os.getcwd(),'logParDefaut.log')
-            Log.log=Log(log_path)
         return Log.log
     
     getInstance=staticmethod(getInstance)
@@ -34,7 +33,10 @@ class Log(object):
         #print sys.getdefaultencoding()
         unicode_str=u'%s : %s \n'  % (date_stamp,msg)
         #unicode_str=msg
-        self.log.write(unicode_str)
+        if self.log is not None:
+            self.log.write(unicode_str)
+        else:
+            print(unicode_str)
         return unicode_str
     
     def raw(self,msg):
@@ -43,12 +45,16 @@ class Log(object):
         #print sys.getdefaultencoding()
         unicode_str='%s : %s \n'  % (date_stamp,msg)
         #unicode_str=msg
-        self.log.write(unicode_str)
+        if self.log is not None:
+            self.log.write(unicode_str)
+        else:
+            print(unicode_str)
         return unicode_str
     
     def close(self):
-        self.log.flush()
-        self.log.close()
+        if self.log is not None:
+            self.log.flush()
+            self.log.close()
         return self.log_path
 
 if __name__ == '__main__':

@@ -48,16 +48,22 @@ class SettingsD8Import(Settings):
 class SettingsD8ImportRandosJour(SettingsD8Import):
     def __init__(self, *args, **kwargs):
         SettingsD8Import.__init__(self,*args, **kwargs)
-        self.rjsettings = { # D8 field versus Python field in the csv file  (0 starting rang)...
+        self.rjsettings_prod = { # D8 field versus Python field in the csv file  (0 starting rang)...
             'ficCsvRandosCreer':{'file' : 'randonnees.csv', 'date_rando':1 ,'mapping':[['body',22,'string'],['title',4,'string'],['field_date',1,'rifdate'],
                                                                        ['field_gare_depart',19,'string'],['field_heure_depar',11,'riftime'],
                                                                         ['field_gare_depart_retour',23,'string'],['field_heure_arrivee_aller',15,'riftime']],
-            'creerRandoRestAction':{'url':'http://pub.rifrando.asso.fr/rest/type/node','method':'POST','node':'randonnee_de_journee'},
+            'creerRandoRestAction':{'posttype_url':'http://prif.jpmena.eu/rest/type/node','post_url':'http://prif.jpmena.eu/entity/node?_format=hal_json'},
+        }}
+        self.rjsettings_dev = { # D8 field versus Python field in the csv file  (0 starting rang)...
+            'ficCsvRandosCreer':{'file' : 'randonnees.csv', 'date_rando':1 ,'mapping':[['body',22,'string'],['title',4,'string'],['field_date',1,'rifdate'],
+                                                                       ['field_gare_depart',19,'string'],['field_heure_depar',11,'riftime'],
+                                                                        ['field_gare_depart_retour',23,'string'],['field_heure_arrivee_aller',15,'riftime']],
+            'creerRandoRestAction':{'posttype_url':'http://dru8rif.ovh/rest/type/node/randonnee_de_journee','post_url':'http://dru8rif.ovh/entity/node?_format=hal_json'},
         }}
         self.parametres_prod = self.parametres_gen_prod.copy()
-        self.parametres_prod.update(self.rjsettings)
+        self.parametres_prod.update(self.rjsettings_prod)
         self.parametres_dev = self.parametres_gen_dev.copy() 
-        self.parametres_dev.update(self.rjsettings)
+        self.parametres_dev.update(self.rjsettings_dev)
 
 if __name__ == '__main__':
     pass
