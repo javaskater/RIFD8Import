@@ -43,6 +43,8 @@ class Curl(object):
                 get_post_data = parse.urlencode(requestparams)
             elif requestparams is not None and method == 'POST':
                 get_post_data = json.dumps(requestparams).encode('utf8')
+                get_post_data_for_print = json.dumps(requestparams,indent=4)
+                self.f_log.p("POST JSON BODY:|{0}|".format(get_post_data_for_print))
             
             httprequest = request.Request(#https://docs.python.org/3.4/library/urllib.request.html#urllib.request.Request
                 url,
@@ -81,7 +83,7 @@ class Curl(object):
                     self.f_log.p('Curl: La tentative: {0}/{1} d\'est déroulée avec succès'.format(essaiNo,nbRetries))
                     arret=True
                 except (error.URLError, error.HTTPError) as e:
-                    self.trace('exception levee, on relance la requete')
+                    self.f_log.p('exception levee, on relance la requete')
                     essaiNo+=1
                     arret=not(essaiNo<=nbRetries)
                     if arret:
@@ -111,8 +113,8 @@ if __name__ == '__main__':
                        "field_gare_depart":[{"value":"Paris Gare de Lyon"}],
                        "field_gare_depart_retour":[{"value":"Bourron Marlotte Grez (zone 5)"}],
                        "field_heure_arrivee_aller":[{"value":"2016-03-31T09:17:00"}],
-                       "field_heure_depar":[{"value":"2016-03-31T08:19:00"}]}
-    hal_json_d8_postdata={"uid": [{"url": "\\/fr\\/user\\/1", "target_id": "1"}], "_links": {"type": {"href": "http://dru8rif.ovh/rest/type/node/randonnee_de_journee"}}, "body": [{"value": "Le Faubourg Poissonni\u00e8re dans toute sa diversit\u00e9, les Petites Ecuries, quelques passages du quartier Strasbourg, l'h\u00f4pital St Louis, la place Ste Marthe."}], "title": [{"value": "Promenade dans le 10\u00e8me"}], "field_date": [{"value": "2016-02-01"}], "field_gare_depart": [{"value": ""}], "field_heure_depar": [{"value": "2016-02-01T00:00:00"}], "field_gare_depart_retour": [{"value": "m\u00e9tro Belleville"}], "field_heure_arrivee_aller": [{"value": "2016-02-01T17:00:00"}]}
+                       "field_heure_depart_aller":[{"value":"2016-03-31T08:19:00"}]}
+    #hal_json_d8_postdata={"uid": [{"url": "\\/fr\\/user\\/1", "target_id": "1"}], "_links": {"type": {"href": "http://dru8rif.ovh/rest/type/node/randonnee_de_journee"}}, "body": [{"value": "Le Faubourg Poissonni\u00e8re dans toute sa diversit\u00e9, les Petites Ecuries, quelques passages du quartier Strasbourg, l'h\u00f4pital St Louis, la place Ste Marthe."}], "title": [{"value": "Promenade dans le 10\u00e8me"}], "field_date": [{"value": "2016-02-01"}], "field_gare_depart": [{"value": ""}], "field_heure_depar": [{"value": "2016-02-01T00:00:00"}], "field_gare_depart_retour": [{"value": "m\u00e9tro Belleville"}], "field_heure_arrivee_aller": [{"value": "2016-02-01T17:00:00"}]}
     d8_post_headers={'Accept':'application/hal+json',
                      'Content-Type':'application/hal+json',
                      'X-CSRF-Token':token.decode('ascii'),

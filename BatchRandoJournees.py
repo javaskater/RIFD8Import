@@ -35,7 +35,9 @@ class BatchRJ(object):
             for csv_row in reader:
                 if indice > 0:
                     self.log_object.p("+ on traite la ligne {0}".format(indice))
-                    self.rractions.createHike(csv_row)
+                    res=self.rractions.createHike(csv_row)
+                    if res=="OK":
+                        indice_traite_ok+=1
                 indice += 1
             self.log_object.p("sur {0} lignes traitees, {1} effectivement inserees".format(indice, indice_traite_ok))
         else:
