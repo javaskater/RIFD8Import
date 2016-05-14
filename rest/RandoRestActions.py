@@ -9,7 +9,7 @@ Created on 24 mars 2016
 
 import datetime
 
-from batch.Curl import Curl
+from rest.Curl import Curl
 from utils.authentication import Authentication
 
 from utils.Log import Log
@@ -34,16 +34,15 @@ class RandoRestAction(object):
                      'X-CSRF-Token':self.token.decode('ascii'),
                      'Authorization':self.authentication.createBasicAuthorizationHeader()}    
     
-    def createHike(self,csv_row,champs_date):
-        self.d8_post_headers={"_links":{"type":{self.settings['creerRandoRestAction']['posttype_url']},
-                                      "uid":[{"target_id":"1","url":"\/fr\/user\/1"}]}
-        date_randonnee =  datetime.datetime.strptime(csv_row[self.settings['ficCsvRandosCreer']['date_rif']], '%Y-%m-%d').date()
+    def createHike(self,csv_row):
+        self.d8_post_headers={"_links":{"type":{self.settings['creerRandoRestAction']['posttype_url']}, "uid":[{"target_id":"1","url":"\/fr\/user\/1"}]}}
+        champs_date=csv_row[self.settings['ficCsvRandosCreer']['date_rando']]
         for champs in self.settings['ficCsvRandosCreer']['mapping']:
             d8_name=champs[0]
             d8_type=champs[2]
             csv_pos=champs[1]
             self.log_objet.p("++ le champs drupal {0} de type {1} a pour rang {2} et valeur: {3}".format(d8_name, d8_type, csv_pos, csv_row[csv_pos]))
-            self.d8_post_data[d8_name] = [{"value":self.translate(d8_type,csv_row[csv_pos],date_randonnee)}]
+            self.d8_post_data[d8_name] = [{"value":self.translate(d8_type,csv_row[csv_pos],champs_date)}]
         #hal_json_d8_postdata = json.dumps(d8_postdata)
         hal_json_d8_postdata = self.d8_post_data
         #hal_json_d8_postdata = {"uid": [{"url": "\\/fr\\/user\\/1", "target_id": "1"}], "_links": {"type": {"href": "http://dru8rif.ovh/rest/type/node/randonnee_de_journee"}}, "body": [{"value": "Le Faubourg Poissonni\u00e8re dans toute sa diversit\u00e9, les Petites Ecuries, quelques passages du quartier Strasbourg, l'h\u00f4pital St Louis, la place Ste Marthe."}], "title": [{"value": "Promenade dans le 10\u00e8me"}], "field_date": [{"value": "2016-02-01"}], "field_gare_depart": [{"value": ""}], "field_heure_depar": [{"value": "2016-02-01T00:00:00"}], "field_gare_depart_retour": [{"value": "m\u00e9tro Belleville"}], "field_heure_arrivee_aller": [{"value": "2016-02-01T17:00:00"}]}

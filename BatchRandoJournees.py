@@ -11,7 +11,7 @@ import os
 import csv
 from utils.Log import Log
 from domain.Settings import SettingsD8ImportRandosJour
-from batch.RandoRestActions import RandoRestAction
+from rest.RandoRestActions import RandoRestAction
 
 class BatchRJ(object):
 
@@ -25,7 +25,6 @@ class BatchRJ(object):
     
     def importRandosJour(self):
         path_csv = os.path.join(self.settings['pathCsvs'],self.settings['ficCsvRandosCreer']['file'])
-        champs_date = self.settings['ficCsvRandosCreer']['date_rando']
         if os.path.exists(path_csv):
             #first we get a token using a simple GET MEthod !!!
             self.rractions.getTokenAndHeaders()
