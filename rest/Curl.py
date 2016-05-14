@@ -13,6 +13,9 @@ from urllib import request, parse, error
 
 from utils.authentication import Authentication
 
+#just for the test main !!!
+from utils.Log import Log
+
 
 class Curl(object):
     def __init__(self, f_log=None,proxy_info=None, ):
@@ -94,7 +97,7 @@ class Curl(object):
             return self.getUrlResponseData(url, method, reqparams)
 
 if __name__ == '__main__':
-    c=Curl()
+    c=Curl(f_log=Log())
     #first we get a token using a simple GET MEthod !!!
     token=c.secureRequest('http://dru8rif.ovh/rest/session/token', paramsRetry={'timeout':3,'nbRetries':5})
     print('le csrf token vaut: {0}'.format(token))

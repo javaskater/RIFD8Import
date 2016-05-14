@@ -34,7 +34,7 @@ class SettingsD8Import(Settings):
                          'outputDir':u'D:/Applis/batchAnimateurs/out',
                          'mail':{'email':u'adminadh@rifrando.fr','serveurSMTP':u'smtp.numericable.fr'}
                          }
-        self.parametres_gen_dev={'pathCsvs':u'/home/jpmena/RIF/transfert_rifrandoextra_03-07-2016/importations',
+        self.parametres_gen_dev={'pathCsvs':u'/home/jpmena/RIF/importations',
                          'paramsProxy':None,
                           #'paramsProxy':{'host':'dgproxy.appli.dgi','port':8080},#pour le bureau où l'on est derrière un proxy
                          'paramsRetry':{'timeout':60,'nbRetries':5},
@@ -52,16 +52,16 @@ class SettingsD8ImportRandosJour(SettingsD8Import):
             'ficCsvRandosCreer':{'file' : 'randonnees.csv', 'date_rando':1 ,'mapping':[['field_cle',0,'integer'], ['field_type',2,'string'], ['field_date',1,'rifdate'],['title',4,'string'],
                                 ['field_heure_depart_aller',11,'riftime'], ['field_gare_depart',19,'string'], ['field_heure_arrivee_aller',14,'riftime'], ['field_gare_arrivee_aller',21,'string'],
                                 ['field_heure_depart_retour',15,'riftime'], ['field_gare_depart_retour',23,'string'], ['field_heure_arrivee_retour',18,'riftime'], ['field_gare_arrivee_retour',25,'string'],
-                                ['body',22,'string']],
+                                ['body',22,'string']]},
             'creerRandoRestAction':{'posttype_url':'http://prif.jpmena.eu/rest/type/node','post_url':'http://prif.jpmena.eu/entity/node?_format=hal_json'},
-        }}
+        }
         self.rjsettings_dev = { # D8 field versus Python field in the csv file  (0 starting rang)...
             'ficCsvRandosCreer':{'file' : 'randonnees.csv', 'date_rando':1 ,'mapping':[['field_cle',0,'integer'], ['field_type',2,'string'], ['field_date',1,'rifdate'],['title',4,'string'],
                                 ['field_heure_depart_aller',11,'riftime'], ['field_gare_depart',19,'string'], ['field_heure_arrivee_aller',14,'riftime'], ['field_gare_arrivee_aller',21,'string'],
                                 ['field_heure_depart_retour',15,'riftime'], ['field_gare_depart_retour',23,'string'], ['field_heure_arrivee_retour',18,'riftime'], ['field_gare_arrivee_retour',25,'string'],
-                                ['body',22,'string']],
+                                ['body',22,'string']]},
             'creerRandoRestAction':{'posttype_url':'http://dru8rif.ovh/rest/type/node/randonnee_de_journee','post_url':'http://dru8rif.ovh/entity/node?_format=hal_json'},
-        }}
+        }
         self.parametres_prod = self.parametres_gen_prod.copy()
         self.parametres_prod.update(self.rjsettings_prod)
         self.parametres_dev = self.parametres_gen_dev.copy() 
